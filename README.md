@@ -5,4 +5,5 @@
 -   HTML
 -   CSS
 -   JavaScript
+-   JQuery
 -   PWA
