@@ -58,7 +58,7 @@ function logIn(ingreso) {
         timeline.addClass('oculto');
         avatarSel.removeClass('oculto');
 
-        titulo.text('Seleccione Personaje');
+        titulo.html('<i class="fa fa-user"></i>&nbsp;&nbsp;Select Character');
     }
 }
 
