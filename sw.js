@@ -1,7 +1,7 @@
 importScripts('js/sw-utils.js');
 
 const STATIC_CACHE = 'static-v2';
-const DYNAMIC_CACHE = 'dynamic-v1';
+const DYNAMIC_CACHE = 'dynamic-v2';
 const INMUTABLE_CACHE = 'inmutable-v1';
 
 const APP_SHELL = [
@@ -29,10 +29,12 @@ const APP_SHELL_INMUTABLE = [
 self.addEventListener('install', (e) => {
     const cacheStatic = caches
         .open(STATIC_CACHE)
-        .then((cache) => cache.addAll(APP_SHELL));
+        .then((cache) => cache.addAll(APP_SHELL))
+        .catch(console.error);
     const cacheInmutable = caches
         .open(INMUTABLE_CACHE)
-        .then((cache) => cache.addAll(APP_SHELL_INMUTABLE));
+        .then((cache) => cache.addAll(APP_SHELL_INMUTABLE))
+        .catch(console.error);
 
     e.waitUntil(Promise.all([cacheStatic, cacheInmutable]));
 });
@@ -44,6 +46,10 @@ self.addEventListener('activate', (e) => {
             if (key !== STATIC_CACHE && key.includes('static')) {
                 return caches.delete(key);
             }
+
+            if (key !== DYNAMIC_CACHE && key.includes('dynamic')) {
+                return caches.delete(key);
+            }
         });
     });
 
@@ -52,6 +58,7 @@ self.addEventListener('activate', (e) => {
 
 // Cache with network fallback
 self.addEventListener('fetch', (e) => {
+    if (!(e.request.url.indexOf('http') === 0)) return;
     const response = caches.match(e.request).then((res) => {
         if (res) {
             return res;
